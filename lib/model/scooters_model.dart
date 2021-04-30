@@ -2,36 +2,58 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:scootery/data/scooter_repo.dart';
+import 'package:scootery/extensions/extensions.dart';
+import 'package:scootery/gen/assets.gen.dart';
+
 import 'scooter.dart';
 
 class ScooterModel extends ChangeNotifier {
-  /// Internal, private state of the cart.
-  final List<Scooter> _items = [];
-  var count = 1;
+  final ScooterRepo scooterRepo;
+  Future<BitmapDescriptor> icon = BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(size: Size(64, 64)), Assets.scooter64.path);
 
-  /// An unmodifiable view of the items in the cart.
+  ScooterModel({required this.scooterRepo});
+
+  List<Scooter> _items = [];
+
   UnmodifiableListView<Scooter> get items => UnmodifiableListView(_items);
 
-  /// The current total price of all items (assuming all items cost $42).
-  int get totalPrice => _items.length * 42;
+  Scooter? _selectedScooter;
 
-  /// Adds [item] to cart. This and [removeAll] are the only ways to modify the
-  /// cart from the outside.
-  void add(Scooter item) {
-    _items.add(item);
-    // This call tells the widgets that are listening to this model to rebuild.
+  Scooter? get selectedScooter => _selectedScooter;
+
+  void fetchScooters(double latitude, double longitude) async {
+    var result = await scooterRepo.fetchScooters(latitude, longitude);
+    var iconNames = result.scooters.map((e) => e.assetKey()).unique().toList();
+    var iconsFutures = iconNames.map((e) =>
+        BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(size: Size(64, 64)), 'assets/$e.png'));
+    var icons = await Future.wait(iconsFutures);
+    var defaultIcon = await this.icon;
+    var iconsByName = Map<String, BitmapDescriptor>();
+    for (var i = 0; i < iconNames.length; ++i) {
+      iconsByName[iconNames[i]] = icons[i];
+    }
+    _items = result.scooters.map((e) =>
+        Scooter(
+          provider: e.provider,
+          id: e.id,
+          lat: e.lat,
+          lng: e.lng,
+          icon: iconsByName.containsKey(e.assetKey()) ? iconsByName[e.assetKey()]! : defaultIcon,
+        )).toList();
     notifyListeners();
   }
 
-  /// Removes all items from the cart.
-  void removeAll() {
-    _items.clear();
-    // This call tells the widgets that are listening to this model to rebuild.
+  void selectScooter(String id) {
+    _selectedScooter = items.firstWhere((s) => s.id == id);
     notifyListeners();
   }
 
-  void increment(){
-    count = count+1;
+  void resetSelectedScooter() {
+    _selectedScooter = null;
     notifyListeners();
   }
 }

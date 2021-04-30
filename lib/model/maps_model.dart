@@ -1,14 +1,19 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
-class MapsModel extends ChangeNotifier {
+class MapsModel extends ChangeNotifier with DiagnosticableTreeMixin  {
   final _location = new Location();
-  LocationData locationData;
+  LocationData? _locationData;
+  LocationData? get locationData => _locationData;
+
+  MapPosition? _mapPosition;
+  MapPosition? get mapPosition => _mapPosition;
+
   MapsModel(){
     init();
     _location.onLocationChanged.listen((LocationData locationData) {
-      this.locationData = locationData;
-      this.notifyListeners();
+      this._locationData = locationData;
     });
   }
 
@@ -31,14 +36,29 @@ class MapsModel extends ChangeNotifier {
         return;
       }
     }
-    this.locationData = await _location.getLocation();
+    this._locationData = await _location.getLocation();
     notifyListeners();
 
   }
-  @override
-  String toString() {
-    var lng = locationData?.longitude;
-    var lat = locationData?.latitude;
-    return "Lat: $lat, Long: $lng";
+
+  void updateMapPosition(double latitude, double longitude){
+    _mapPosition = new MapPosition(latitude: latitude, longitude: longitude);
+    notifyListeners();
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    // list all the properties of your class here.
+    // See the documentation of debugFillProperties for more information.
+    properties.add(DoubleProperty('Location latitude', locationData?.latitude));
+    properties.add(DoubleProperty('Location longitude', locationData?.longitude));
+    properties.add(DoubleProperty('Map camera latetude', mapPosition?.latitude));
+    properties.add(DoubleProperty('Map camera longitude', mapPosition?.longitude));
+  }
+}
+class MapPosition{
+  final double latitude;
+  final double longitude;
+  MapPosition({required this.latitude, required this.longitude});
 }

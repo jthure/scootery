@@ -18,14 +18,21 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   provider: ^5.0.0
   google_maps_flutter: ^2.0.1
+  flutter_map: ^0.12.0
+  user_location:
+    git:
+      url: https://github.com/igaurab/user_location_plugin.git
+#  flutter_map_location_marker: ^0.0.7
   location: ^4.1.1
+  http: ^0.13.1
+  quiver: ">=0.22.0 <3.0.0"
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -35,13 +42,16 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner:
+  flutter_gen_runner:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
-
+  assets:
+    - assets/
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

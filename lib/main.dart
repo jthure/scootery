@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scootery/data/scooter_repo.dart';
 import 'package:scootery/model/maps_model.dart';
+import 'package:scootery/ui/floating_refresh_button.dart';
 import 'package:scootery/ui/map_widget.dart';
+import 'package:scootery/ui/map_widget_2.dart';
+import 'package:scootery/ui/selection_window.dart';
 
 import 'model/scooters_model.dart';
 
-void main() {
+void main() async {
   runApp(MyApp());
 }
 
@@ -13,8 +17,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (context) => ScooterModel(),
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<ScooterModel>(
+              create: (context) => ScooterModel(scooterRepo: ScooterRepo())),
+          ChangeNotifierProvider<MapsModel>(create: (context) => MapsModel())
+        ],
         child: MaterialApp(
           title: 'Scootery',
           theme: ThemeData(primarySwatch: Colors.red),
@@ -27,20 +35,18 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var scooters = context.watch<ScooterModel>();
     return Scaffold(
-      appBar: AppBar(title: Text('Scootery')),
-      body: Center(
-        child: MultiProvider(
-          providers: [ChangeNotifierProvider<MapsModel>(create: (context) => MapsModel())],
-          child: MapsWidget(),
-        )
+      // appBar: AppBar(title: Text('Scootery')),
+      body: Stack(
+        children: [
+          MapsWidget2(),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SelectionWindow(),
+          )
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: scooters.increment,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButton: FloatingRefreshButton(),
     );
   }
 }
