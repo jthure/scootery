@@ -23,6 +23,15 @@ class _MapsWidget extends State {
 
 
   @override
+  void initState() {
+    super.initState();
+
+    mapController.mapEventStream.listen((MapEvent event) => {
+      print("Event source: ${event.source}")
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     // _controller.future.then((value) => value.)
     // var _currentLocationData = context.watch<MapsModel>();
