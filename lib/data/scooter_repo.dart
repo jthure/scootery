@@ -7,7 +7,7 @@ class ScooterRepo {
       double latitude, double longitude) async {
     final response = await http.post(
       Uri.https('flow-api.fluctuo.com', 'v1',
-          {'access_token': 'm8hMmZsNJQRxVF5OZ0nXqgUkYsNAhZRS'}),
+          {'access_token': 'd4cKOeCT4Pm8JOK578KOzNJP6urB66qP'}),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
