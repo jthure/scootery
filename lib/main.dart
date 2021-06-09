@@ -1,11 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scootery/data/scooter_repo.dart';
 import 'package:scootery/model/maps_model.dart';
-import 'package:scootery/ui/floating_refresh_button.dart';
-import 'package:scootery/ui/map_widget.dart';
 import 'package:scootery/ui/map_widget_2.dart';
-import 'package:scootery/ui/selection_window.dart';
+import 'package:scootery/ui/rounded_icon_button.dart';
+import 'package:scootery/ui/text_with_icon_button.dart';
 
 import 'model/scooters_model.dart';
 
@@ -36,17 +36,31 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: Text('Scootery')),
       body: Stack(
         children: [
           MapsWidget2(),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SelectionWindow(),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Align(
+                alignment: Alignment.bottomRight,
+                child: RoundedIconButton(icon: Icons.assistant_photo),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                      child: TextWithIconButton(
+                          text: "Filter", icon: Icons.filter)),
+                  Expanded(
+                      child: TextWithIconButton(
+                          text: "Scan", icon: Icons.qr_code_scanner)),
+                ],
+              ),
+            ],
           )
         ],
       ),
-      floatingActionButton: FloatingRefreshButton(),
     );
   }
 }
