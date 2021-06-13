@@ -11,8 +11,7 @@ import 'scooter.dart';
 
 class ScooterModel extends ChangeNotifier {
   final ScooterRepo scooterRepo;
-  Future<BitmapDescriptor> icon = BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(64, 64)), Assets.scooter64.path);
+  Image icon = Image.asset(Assets.scooter64.path);
 
   ScooterModel({required this.scooterRepo});
 
@@ -27,12 +26,11 @@ class ScooterModel extends ChangeNotifier {
   void fetchScooters(double latitude, double longitude) async {
     var result = await scooterRepo.fetchScooters(latitude, longitude);
     var iconNames = result.scooters.map((e) => e.assetKey()).unique().toList();
-    var iconsFutures = iconNames.map((e) =>
-        BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(size: Size(64, 64)), 'assets/$e.png'));
-    var icons = await Future.wait(iconsFutures);
-    var defaultIcon = await this.icon;
-    var iconsByName = Map<String, BitmapDescriptor>();
+    var icons = iconNames.map((e) =>
+        Image.asset('assets/$e.png')).toList();
+    //var icons = await Future.wait(iconsFutures);
+    var defaultIcon = this.icon;
+    var iconsByName = Map<String, Image>();
     for (var i = 0; i < iconNames.length; ++i) {
       iconsByName[iconNames[i]] = icons[i];
     }

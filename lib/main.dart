@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scootery/data/scooter_repo.dart';
 import 'package:scootery/model/maps_model.dart';
+import 'package:scootery/ui/filter_button.dart';
+import 'package:scootery/ui/map_widget.dart';
 import 'package:scootery/ui/map_widget_2.dart';
 import 'package:scootery/ui/rounded_icon_button.dart';
 import 'package:scootery/ui/text_with_icon_button.dart';
@@ -49,9 +51,7 @@ class MyHomePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Expanded(
-                      child: TextWithIconButton(
-                          text: "Filter", icon: Icons.filter)),
+                  Expanded(child: FilterButton()),
                   Expanded(
                       child: TextWithIconButton(
                           text: "Scan", icon: Icons.qr_code_scanner)),
