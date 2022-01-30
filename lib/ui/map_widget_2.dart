@@ -14,7 +14,6 @@ class MapsWidget2 extends StatefulWidget {
 }
 
 class _MapsWidget extends State {
-  // Completer<GoogleMapController> _controller = Completer();
   var currentCameraPosition = LatLng(47.42796133580664, -122.085749655962);
 
   MapController mapController = MapController();
@@ -26,77 +25,58 @@ class _MapsWidget extends State {
   void initState() {
     super.initState();
 
-    mapController.mapEventStream.listen((MapEvent event) => {
-      print("Event source: ${event.source}")
-    });
+    // mapController.mapEventStream.listen((MapEvent event) => {
+    //   //print("Event source: ${event.source}")
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
-    // _controller.future.then((value) => value.)
-    // var _currentLocationData = context.watch<MapsModel>();
-    // var currentLocationData = _currentLocationData.locationData;
 
-    // _controller.future.then((value) => value.animateCamera(CameraUpdate.));
-    // if(currentLocationData != null){
-    //   lat = currentLocationData.latitude;
-    //   lng = currentLocationData.longitude;
-    // }
+    final m = context.read<MapsModel>();
+    final scooters = context.watch<ScooterModel>().items;
 
     userLocationOptions = UserLocationOptions(
       context: context,
       mapController: mapController,
       markers: markers,
       zoomToCurrentLocationOnLoad: true,
-
       updateMapLocationOnPositionChange: false,
+      showHeading: true,
     );
 
-    final locationData = context.watch<MapsModel>().locationData;
-    final scooters = context.watch<ScooterModel>().items;
 
-    if (locationData != null) {
-      final newLatLng = LatLng(locationData.latitude!, locationData.longitude!);
-      if (newLatLng != currentCameraPosition) {
-        print(currentCameraPosition);
-        print(newLatLng);
-        mapController.move(newLatLng, 13.0);
-        this.currentCameraPosition = newLatLng;
-      }
-    }
 
-    // final CameraPosition _kGooglePlex = CameraPosition(
-    //   target: currentCameraPosition,
-    //   zoom: 14.4746,
-    // );
+
+    var scooterMarkers = scooters.map((e) => Marker(
+      width: 30.0,
+      height: 30.0,
+      point: LatLng(e.lat, e.lng),
+      builder: (ctx) =>
+          Container(
+            child: e.icon,
+          ),
+    )).toList();
+
 
     return FlutterMap(
       options: MapOptions(
         center: currentCameraPosition,
         zoom: 13.0,
+        onPositionChanged: (MapPosition pos, x) => {m.updateMapPosition(pos.center.latitude, pos.center.longitude)},
         plugins: [
           UserLocationPlugin()
-        ]
+        ],
       ),
       mapController: mapController,
       layers: [
         TileLayerOptions(
-            // urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            urlTemplate: "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png",
-            // subdomains: ['a', 'b', 'c']
+            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            // urlTemplate: "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png",
+            subdomains: ['a', 'b', 'c']
         ),
         MarkerLayerOptions(
-          markers: [
-            Marker(
-              width: 80.0,
-              height: 80.0,
-              point: LatLng(51.5, -0.09),
-              builder: (ctx) =>
-                  Container(
-                    child: FlutterLogo(),
-                  ),
-            ),
-          ],
+          markers: scooterMarkers,
         ),
         MarkerLayerOptions(markers: markers),
         userLocationOptions!,

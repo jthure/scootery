@@ -7,8 +7,8 @@ class MapsModel extends ChangeNotifier with DiagnosticableTreeMixin  {
   LocationData? _locationData;
   LocationData? get locationData => _locationData;
 
-  MapPosition? _mapPosition;
-  MapPosition? get mapPosition => _mapPosition;
+  MyMapPosition _mapPosition=MyMapPosition(latitude: 0.0, longitude: 0.0);
+  MyMapPosition get mapPosition => _mapPosition;
 
   MapsModel(){
     init();
@@ -42,7 +42,7 @@ class MapsModel extends ChangeNotifier with DiagnosticableTreeMixin  {
   }
 
   void updateMapPosition(double latitude, double longitude){
-    _mapPosition = new MapPosition(latitude: latitude, longitude: longitude);
+    _mapPosition = new MyMapPosition(latitude: latitude, longitude: longitude);
     notifyListeners();
   }
 
@@ -53,12 +53,12 @@ class MapsModel extends ChangeNotifier with DiagnosticableTreeMixin  {
     // See the documentation of debugFillProperties for more information.
     properties.add(DoubleProperty('Location latitude', locationData?.latitude));
     properties.add(DoubleProperty('Location longitude', locationData?.longitude));
-    properties.add(DoubleProperty('Map camera latetude', mapPosition?.latitude));
-    properties.add(DoubleProperty('Map camera longitude', mapPosition?.longitude));
+    properties.add(DoubleProperty('Map camera latetude', mapPosition.latitude));
+    properties.add(DoubleProperty('Map camera longitude', mapPosition.longitude));
   }
 }
-class MapPosition{
+class MyMapPosition{
   final double latitude;
   final double longitude;
-  MapPosition({required this.latitude, required this.longitude});
+  MyMapPosition({required this.latitude, required this.longitude});
 }
